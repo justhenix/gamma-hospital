@@ -1,3 +1,5 @@
+import * as m from "@/paraglide/messages.js";
+
 export const PRESCRIPTION_STATUSES = [
   "WAITING",
   "VERIFIED",
@@ -9,47 +11,36 @@ export const PRESCRIPTION_STATUSES = [
 
 export type PrescriptionStatus = (typeof PRESCRIPTION_STATUSES)[number];
 
-export const PRESCRIPTION_STATUS_LABELS: Record<
+export const STATUS_VARIANTS: Record<
   PrescriptionStatus,
-  { label: string; labelId: string; description: string; variant: "default" | "secondary" | "destructive" | "outline" }
+  "default" | "secondary" | "destructive" | "outline"
 > = {
-  WAITING: {
-    label: "Waiting",
-    labelId: "Menunggu",
-    description: "Resep baru masuk ke antrean farmasi",
-    variant: "secondary",
-  },
-  VERIFIED: {
-    label: "Verified",
-    labelId: "Diverifikasi",
-    description: "Resep telah diperiksa kelengkapan & dosis oleh apoteker",
-    variant: "outline",
-  },
-  PREPARING: {
-    label: "Preparing",
-    labelId: "Diracik / Disiapkan",
-    description: "Obat sedang disiapkan atau diracik di meja farmasi",
-    variant: "default",
-  },
-  READY_FOR_PICKUP: {
-    label: "Ready for Pickup",
-    labelId: "Siap Diambil",
-    description: "Obat selesai dikemas dan siap diserahkan ke pasien",
-    variant: "default",
-  },
-  COMPLETED: {
-    label: "Completed",
-    labelId: "Selesai",
-    description: "Obat telah diserahkan dan diedukasi kepada pasien",
-    variant: "outline",
-  },
-  NEEDS_CLARIFICATION: {
-    label: "Needs Clarification",
-    labelId: "Butuh Klarifikasi",
-    description: "Ada kendala dosis/stok/interaksi yang perlu konfirmasi dokter",
-    variant: "destructive",
-  },
+  WAITING: "secondary",
+  VERIFIED: "outline",
+  PREPARING: "default",
+  READY_FOR_PICKUP: "default",
+  COMPLETED: "outline",
+  NEEDS_CLARIFICATION: "destructive",
 };
+
+export function getStatusLabel(status: PrescriptionStatus | string): string {
+  switch (status) {
+    case "WAITING":
+      return m.status_waiting();
+    case "VERIFIED":
+      return m.status_verified();
+    case "PREPARING":
+      return m.status_preparing();
+    case "READY_FOR_PICKUP":
+      return m.status_ready_for_pickup();
+    case "COMPLETED":
+      return m.status_completed();
+    case "NEEDS_CLARIFICATION":
+      return m.status_needs_clarification();
+    default:
+      return status;
+  }
+}
 
 export const ALLOWED_STATUS_TRANSITIONS: Record<PrescriptionStatus, PrescriptionStatus[]> = {
   WAITING: ["VERIFIED", "NEEDS_CLARIFICATION"],
@@ -63,13 +54,13 @@ export const ALLOWED_STATUS_TRANSITIONS: Record<PrescriptionStatus, Prescription
 export const ITEM_TYPES = ["READY", "COMPOUNDED"] as const;
 export type ItemType = (typeof ITEM_TYPES)[number];
 
-export const ITEM_TYPE_LABELS: Record<ItemType, { label: string; labelId: string }> = {
-  READY: {
-    label: "Ready-made",
-    labelId: "Obat Jadi",
-  },
-  COMPOUNDED: {
-    label: "Compounded",
-    labelId: "Racikan",
-  },
-};
+export function getItemTypeLabel(type: ItemType | string): string {
+  switch (type) {
+    case "READY":
+      return m.item_type_ready();
+    case "COMPOUNDED":
+      return m.item_type_compounded();
+    default:
+      return type;
+  }
+}

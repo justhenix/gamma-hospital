@@ -9,6 +9,7 @@ import { AuditLogTimeline } from "@/components/prescription/audit-log-timeline";
 import { Button } from "@/components/ui/button";
 import { formatDate, calculateAge } from "@/lib/utils";
 import { ArrowLeft, Printer, ExternalLink } from "lucide-react";
+import * as m from "@/paraglide/messages.js";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default async function PrescriptionDetailPage({
             <Button asChild variant="outline" size="sm">
               <Link href="/" className="flex items-center gap-1.5">
                 <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Back to Workbench</span>
+                <span>{m.action_back_workbench()}</span>
               </Link>
             </Button>
             <span className="font-mono text-xs text-slate-400">/</span>
@@ -61,7 +62,7 @@ export default async function PrescriptionDetailPage({
                 target="_blank"
                 className="flex items-center gap-1.5"
               >
-                <span>Track Queue ({prescription.queueEntry.queueCode})</span>
+                <span>{m.action_track_queue()} ({prescription.queueEntry.queueCode})</span>
                 <ExternalLink className="h-3.5 w-3.5" />
               </Link>
             </Button>
@@ -69,7 +70,7 @@ export default async function PrescriptionDetailPage({
           <Button asChild size="sm">
             <Link href={`/prescriptions/${prescription.id}/label`} className="flex items-center gap-1.5">
               <Printer className="h-3.5 w-3.5" />
-              <span>Print Medication Labels</span>
+              <span>{m.action_print_labels()}</span>
             </Link>
           </Button>
         </div>
@@ -80,7 +81,7 @@ export default async function PrescriptionDetailPage({
         {/* Patient Card */}
         <div className="border rounded-md p-4 bg-white space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
-            Patient Information
+            {m.patient_info()}
           </div>
           <div className="text-lg font-bold text-slate-900">
             {prescription.patient.name}
@@ -92,11 +93,11 @@ export default async function PrescriptionDetailPage({
             </div>
             <div>
               <span className="text-slate-400">Gender:</span>{" "}
-              {prescription.patient.gender === "M" ? "Laki-laki (M)" : "Perempuan (F)"}
+              {prescription.patient.gender === "M" ? "Laki-laki (L)" : "Perempuan (P)"}
             </div>
             <div>
               <span className="text-slate-400">DOB:</span>{" "}
-              {prescription.patient.birthDate} ({patientAge} years)
+              {prescription.patient.birthDate} ({patientAge} th)
             </div>
             <div>
               <span className="text-slate-400">Phone:</span>{" "}
@@ -108,7 +109,7 @@ export default async function PrescriptionDetailPage({
         {/* Clinical / Order Info Card */}
         <div className="border rounded-md p-4 bg-white space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
-            Order & Doctor Information
+            {m.order_info()}
           </div>
           <div className="text-sm font-semibold text-slate-900">
             {prescription.doctorName}
@@ -151,11 +152,11 @@ export default async function PrescriptionDetailPage({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900">
-            Prescription Items ({prescription.items.length})
+            {m.prescription_items()} ({prescription.items.length})
           </h2>
           <div className="text-xs text-slate-500 font-mono">
-            {prescription.items.filter((i) => i.type === "READY").length} Ready-made |{" "}
-            {prescription.items.filter((i) => i.type === "COMPOUNDED").length} Compounded (Racikan)
+            {prescription.items.filter((i) => i.type === "READY").length} {m.item_type_ready()} |{" "}
+            {prescription.items.filter((i) => i.type === "COMPOUNDED").length} {m.item_type_compounded()}
           </div>
         </div>
         <PrescriptionItemsTable items={prescription.items} />
@@ -164,7 +165,7 @@ export default async function PrescriptionDetailPage({
       {/* Audit Log Timeline */}
       <div className="space-y-2 border-t pt-4">
         <h2 className="text-sm font-bold text-slate-900">
-          Audit History & Dispensing Log
+          {m.audit_history()}
         </h2>
         <AuditLogTimeline logs={prescription.auditHistory} />
       </div>

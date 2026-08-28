@@ -16,6 +16,7 @@ import { StatusBadge } from "@/components/workbench/status-badge";
 import { formatTimeOnly } from "@/lib/utils";
 import type { PrescriptionListItem } from "@/server/data-access/prescriptions";
 import { ArrowRight } from "lucide-react";
+import * as m from "@/paraglide/messages.js";
 
 interface QueueTableProps {
   initialItems: PrescriptionListItem[];
@@ -73,9 +74,7 @@ export function QueueTable({ initialItems }: QueueTableProps) {
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs text-slate-500 font-mono px-1">
         <div>
-          Keyboard shortcuts: <kbd className="px-1.5 py-0.5 border rounded bg-slate-100 font-bold">J</kbd> Down /{" "}
-          <kbd className="px-1.5 py-0.5 border rounded bg-slate-100 font-bold">K</kbd> Up /{" "}
-          <kbd className="px-1.5 py-0.5 border rounded bg-slate-100 font-bold">Enter</kbd> Open Detail
+          {m.keyboard_shortcuts_hint()}
         </div>
         <div>
           Selected: {selectedIndex + 1} of {initialItems.length}
@@ -87,13 +86,13 @@ export function QueueTable({ initialItems }: QueueTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-12 text-center">#</TableHead>
-              <TableHead className="w-24">Queue</TableHead>
-              <TableHead>Patient / MRN</TableHead>
-              <TableHead>Department / Doctor</TableHead>
-              <TableHead>Items (Ready / Racik)</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead className="w-24">{m.table_queue()}</TableHead>
+              <TableHead>{m.table_patient_mrn()}</TableHead>
+              <TableHead>{m.table_dept_doctor()}</TableHead>
+              <TableHead>{m.table_items()}</TableHead>
+              <TableHead>{m.table_status()}</TableHead>
+              <TableHead>{m.table_time()}</TableHead>
+              <TableHead className="text-right">{m.table_action()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -118,7 +117,7 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                   <TableCell>
                     <div className="font-semibold text-slate-900">{item.patient.name}</div>
                     <div className="font-mono text-xs text-slate-500">
-                      {item.patient.mrn} • {item.patient.gender === "M" ? "Laki-laki" : "Perempuan"}
+                      {item.patient.mrn} • {item.patient.gender === "M" ? "L" : "P"}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -130,7 +129,7 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                       {item.itemCounts.total} items
                     </div>
                     <div className="text-xs text-slate-500 font-mono">
-                      {item.itemCounts.ready} Jadi | {item.itemCounts.compounded} Racik
+                      {item.itemCounts.ready} {m.item_type_ready()} | {item.itemCounts.compounded} {m.item_type_compounded()}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -142,7 +141,7 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="outline">
                       <Link href={`/prescriptions/${item.id}`} className="flex items-center gap-1">
-                        <span>Detail</span>
+                        <span>{m.action_detail()}</span>
                         <ArrowRight className="h-3 w-3" />
                       </Link>
                     </Button>

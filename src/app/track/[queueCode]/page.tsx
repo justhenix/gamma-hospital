@@ -3,11 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { StatusBadge } from "@/components/workbench/status-badge";
-import { Button } from "@/components/ui/button";
 import { maskName, formatTimeOnly } from "@/lib/utils";
-import { PRESCRIPTION_STATUSES, type PrescriptionStatus } from "@/lib/constants";
+import { getStatusLabel, getItemTypeLabel, type PrescriptionStatus } from "@/lib/constants";
 import { AlertTriangle, CheckCircle2, Check } from "lucide-react";
-import Link from "next/link";
+import * as m from "@/paraglide/messages.js";
 
 interface TrackerData {
   id: string;
@@ -35,14 +34,6 @@ interface TrackerData {
   };
 }
 
-const FLOW_STEPS: { status: PrescriptionStatus; title: string; desc: string }[] = [
-  { status: "WAITING", title: "Menunggu Antrean", desc: "Resep telah diterima sistem farmasi" },
-  { status: "VERIFIED", title: "Diverifikasi", desc: "Apoteker sedang memeriksa resep & dosis" },
-  { status: "PREPARING", title: "Sedang Disiapkan / Diracik", desc: "Obat sedang dikemas & diracik di meja farmasi" },
-  { status: "READY_FOR_PICKUP", title: "Siap Diambil", desc: "Obat selesai! Silakan menuju loket penyerahan" },
-  { status: "COMPLETED", title: "Selesai", desc: "Obat telah diserahkan kepada pasien" },
-];
-
 export default function PatientTrackerPage() {
   const params = useParams();
   const queueCode = typeof params.queueCode === "string" ? params.queueCode : "";
@@ -51,6 +42,14 @@ export default function PatientTrackerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastChecked, setLastChecked] = useState<Date>(new Date());
+
+  const flowSteps: { status: PrescriptionStatus; title: string; desc: string }[] = [
+    { status: "WAITING", title: m.status_waiting(), desc: m.step_waiting_desc() },
+    { status: "VERIFIED", title: m.status_verified(), desc: m.step_verified_desc() },
+    { status: "PREPARING", title: m.status_preparing(), desc: m.step_preparing_desc() },
+    { status: "READY_FOR_PICKUP", title: m.status_ready_for_pickup(), desc: m.step_ready_desc() },
+    { status: "COMPLETED", title: m.status_completed(), desc: m.step_completed_desc() },
+  ];
 
   const fetchData = async () => {
     if (!queueCode) return;
@@ -83,7 +82,7 @@ export default function PatientTrackerPage() {
   }, [queueCode]);
 
   const currentStepIndex = data
-    ? FLOW_STEPS.findIndex((s) => s.status === data.status)
+    ? flowSteps.findIndex((s) => s.status === data.status)
     : -1;
 
   return (
@@ -91,13 +90,13 @@ export default function PatientTrackerPage() {
       {/* Header */}
       <div className="text-center space-y-1 border-b pb-4">
         <div className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
-          RS Indriati Boyolali • Instalasi Farmasi
+          {m.app_subtitle()}
         </div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Status Antrean Resep Pasien
+          {m.tracker_title()}
         </h1>
         <p className="text-xs text-slate-500">
-          Halaman ini memperbarui status secara otomatis setiap 4 detik.
+          {m.tracker_subtitle()}
         </p>
       </div>
 
@@ -118,7 +117,7 @@ export default function PatientTrackerPage() {
           {/* Main Queue Card */}
           <div className="border-2 border-slate-900 rounded-lg p-6 bg-white text-center space-y-3">
             <div className="text-xs font-mono text-slate-500 uppercase tracking-widest">
-              Nomor Antrean Anda
+              {m.tracker_your_number()}
             </div>
             <div className="text-5xl font-black font-mono tracking-tight text-slate-900">
               {data.queueCode}
@@ -142,7 +141,7 @@ export default function PatientTrackerPage() {
               </div>
               <div className="text-right">
                 <span className="text-slate-400">Jenis:</span>{" "}
-                {data.prescription.hasCompounded ? "Racikan" : "Obat Jadi"}
+                {data.prescription.hasCompounded ? getItemTypeLabel("COMPOUNDED") : getItemTypeLabel("READY")}
               </div>
             </div>
           </div>
@@ -152,10 +151,10 @@ export default function PatientTrackerPage() {
             <div className="p-4 rounded-md border border-amber-300 bg-amber-50 text-amber-900 text-xs space-y-1">
               <div className="font-bold flex items-center gap-1.5">
                 <AlertTriangle className="h-4 w-4 text-amber-700" />
-                <span>Resep Sedang Dikonfirmasi</span>
+                <span>{m.tracker_clarification_title()}</span>
               </div>
               <p>
-                Apoteker sedang melakukan konfirmasi teknis ke dokter peresep. Anda tidak perlu khawatir, antrean Anda akan segera dilanjutkan setelah konfirmasi selesai.
+                {m.tracker_clarification_desc()}
               </p>
             </div>
           )}
@@ -165,10 +164,10 @@ export default function PatientTrackerPage() {
             <div className="p-4 rounded-md border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-center space-y-1">
               <div className="font-bold text-base flex items-center justify-center gap-1.5">
                 <CheckCircle2 className="h-5 w-5 text-emerald-700" />
-                <span>Obat Anda Sudah Siap!</span>
+                <span>{m.tracker_ready_banner_title()}</span>
               </div>
               <p className="text-xs">
-                Silakan menuju loket penyerahan obat farmasi dan tunjukkan nomor antrean <strong>{data.queueCode}</strong>.
+                {m.tracker_ready_banner_desc()}
               </p>
             </div>
           )}
@@ -176,11 +175,11 @@ export default function PatientTrackerPage() {
           {/* Workflow Progress Steps */}
           <div className="border rounded-md p-4 bg-white space-y-3">
             <div className="text-xs font-bold font-mono uppercase text-slate-500">
-              Tahapan Pengerjaan Resep
+              {m.tracker_steps_heading()}
             </div>
 
             <div className="space-y-3">
-              {FLOW_STEPS.map((step, idx) => {
+              {flowSteps.map((step, idx) => {
                 const isPassed = currentStepIndex > idx;
                 const isCurrent = currentStepIndex === idx;
 

@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { directUpdateStatusAction } from "@/server/actions/prescription-actions";
 import {
   ALLOWED_STATUS_TRANSITIONS,
-  PRESCRIPTION_STATUS_LABELS,
+  getStatusLabel,
+  STATUS_VARIANTS,
   type PrescriptionStatus,
 } from "@/lib/constants";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight } from "lucide-react";
+import * as m from "@/paraglide/messages.js";
 
 interface StatusActionButtonsProps {
   prescriptionId: string;
@@ -76,7 +78,9 @@ export function StatusActionButtons({
 
       <div className="flex flex-wrap gap-2 items-center">
         {allowedNext.map((nextStatus) => {
-          const meta = PRESCRIPTION_STATUS_LABELS[nextStatus];
+          const label = getStatusLabel(nextStatus);
+          const variant = STATUS_VARIANTS[nextStatus];
+
           if (nextStatus === "NEEDS_CLARIFICATION") {
             return (
               <Button
@@ -89,7 +93,7 @@ export function StatusActionButtons({
                 className="flex items-center gap-1.5"
               >
                 <AlertTriangle className="h-3.5 w-3.5" />
-                <span>Flag: {meta.label} ({meta.labelId})</span>
+                <span>{m.flag_clarification()}</span>
               </Button>
             );
           }
@@ -98,14 +102,14 @@ export function StatusActionButtons({
             <Button
               key={nextStatus}
               type="button"
-              variant={meta.variant === "default" ? "default" : "outline"}
+              variant={variant === "default" ? "default" : "outline"}
               size="sm"
               disabled={isPending}
               onClick={() => handleTransition(nextStatus)}
               className="flex items-center gap-1.5"
             >
               <ArrowRight className="h-3.5 w-3.5" />
-              <span>Advance to {meta.label} ({meta.labelId})</span>
+              <span>{m.advance_to({ status: label })}</span>
             </Button>
           );
         })}

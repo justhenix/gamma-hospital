@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ITEM_TYPE_LABELS, type ItemType } from "@/lib/constants";
+import { getItemTypeLabel, type ItemType } from "@/lib/constants";
 import type { PrescriptionItem } from "@/db/schema";
 
 interface PrescriptionItemsTableProps {
@@ -33,10 +33,7 @@ export function PrescriptionItemsTable({ items }: PrescriptionItemsTableProps) {
         <TableBody>
           {items.map((item, idx) => {
             const isCompounded = item.type === "COMPOUNDED";
-            const typeMeta = ITEM_TYPE_LABELS[item.type as ItemType] || {
-              label: item.type,
-              labelId: item.type,
-            };
+            const typeLabel = getItemTypeLabel(item.type);
 
             return (
               <TableRow
@@ -51,7 +48,7 @@ export function PrescriptionItemsTable({ items }: PrescriptionItemsTableProps) {
                     variant={isCompounded ? "default" : "secondary"}
                     className="font-mono text-[10px]"
                   >
-                    {typeMeta.labelId}
+                    {typeLabel}
                   </Badge>
                 </TableCell>
                 <TableCell className="font-semibold text-slate-900">

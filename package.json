@@ -9,11 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "i18n:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "@inlang/paraglide-js": "^2.25.0",
+    "@inlang/paraglide-next": "^0.8.1",
     "@libsql/client": "^0.14.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

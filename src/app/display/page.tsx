@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { maskName, formatTimeOnly } from "@/lib/utils";
-import { type PrescriptionStatus } from "@/lib/constants";
+import { maskName } from "@/lib/utils";
+import { getStatusLabel, getItemTypeLabel, type PrescriptionStatus } from "@/lib/constants";
+import * as m from "@/paraglide/messages.js";
 
 interface DisplayItem {
   queueCode: string;
@@ -68,10 +69,10 @@ export default function DisplayPage() {
       <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4">
         <div>
           <div className="text-xs font-mono font-bold uppercase tracking-widest text-slate-500">
-            RS INDRIATI BOYOLALI
+            {m.app_subtitle()}
           </div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900">
-            PAPAN ANTREAN INSTALASI FARMASI
+            {m.display_title()}
           </h1>
         </div>
         <div className="text-right">
@@ -79,7 +80,7 @@ export default function DisplayPage() {
             {currentTime || "--:--:--"}
           </div>
           <div className="text-xs font-mono text-slate-500">
-            Update Otomatis (Setiap 3s)
+            {m.display_auto_update()}
           </div>
         </div>
       </div>
@@ -92,7 +93,7 @@ export default function DisplayPage() {
             <div className="flex items-center justify-between border-b border-emerald-200 pb-2 mb-3">
               <h2 className="text-lg font-black tracking-tight text-emerald-950 uppercase flex items-center gap-2">
                 <span className="inline-block w-3 h-3 rounded-full bg-emerald-600 animate-pulse"></span>
-                SIAP DIAMBIL / READY FOR PICKUP
+                {m.display_ready_heading()}
               </h2>
               <span className="font-mono text-xs font-bold text-emerald-800">
                 {data?.readyForPickup.length || 0} Antrean
@@ -131,7 +132,7 @@ export default function DisplayPage() {
           {/* Recently Completed Row */}
           <div className="border rounded-md p-4 bg-white space-y-2">
             <div className="text-xs font-bold font-mono uppercase text-slate-500">
-              Selesai Diserahkan (Terakhir)
+              {m.display_recent_completed()}
             </div>
             <div className="flex flex-wrap gap-2">
               {(!data || data.completed.length === 0) && (
@@ -154,7 +155,7 @@ export default function DisplayPage() {
           <div className="border-2 border-slate-300 rounded-lg p-4 bg-white">
             <div className="flex items-center justify-between border-b pb-2 mb-3">
               <h2 className="text-base font-bold tracking-tight text-slate-900 uppercase">
-                SEDANG DISIAPKAN / RACIK
+                {m.display_preparing_heading()}
               </h2>
               <span className="font-mono text-xs font-bold text-slate-600">
                 {data?.preparing.length || 0} Resep
@@ -186,11 +187,11 @@ export default function DisplayPage() {
                   </div>
                   <div className="text-right font-mono">
                     <span className="px-2 py-0.5 border rounded bg-white font-bold text-[10px] text-slate-700">
-                      {item.status}
+                      {getStatusLabel(item.status)}
                     </span>
                     {item.hasCompounded && (
                       <div className="text-[10px] text-amber-700 mt-1 font-semibold">
-                        [Racikan]
+                        [{getItemTypeLabel("COMPOUNDED")}]
                       </div>
                     )}
                   </div>
