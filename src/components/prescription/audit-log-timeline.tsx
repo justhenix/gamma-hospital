@@ -2,6 +2,7 @@ import React from "react";
 import { formatDate } from "@/lib/utils";
 import type { AuditLog } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
+import { ArrowRight } from "lucide-react";
 
 interface AuditLogTimelineProps {
   logs: AuditLog[];
@@ -26,8 +27,10 @@ export function AuditLogTimeline({ logs }: AuditLogTimelineProps) {
                 {log.action}
               </Badge>
               {log.fromStatus && log.toStatus && (
-                <span className="font-mono text-slate-700">
-                  {log.fromStatus} &rarr; <strong>{log.toStatus}</strong>
+                <span className="font-mono text-slate-700 flex items-center gap-1">
+                  <span>{log.fromStatus}</span>
+                  <ArrowRight className="h-3 w-3 text-slate-400" />
+                  <strong>{log.toStatus}</strong>
                 </span>
               )}
               <span className="text-slate-500 font-mono">by {log.actor}</span>

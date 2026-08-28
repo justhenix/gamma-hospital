@@ -6,6 +6,7 @@ import { formatDate, calculateAge } from "@/lib/utils";
 import { recordPrintAction } from "@/server/actions/prescription-actions";
 import type { PrescriptionItem, Patient, Prescription } from "@/db/schema";
 import Link from "next/link";
+import { ArrowLeft, Printer } from "lucide-react";
 
 interface MedicationLabelPrintProps {
   prescription: Prescription & {
@@ -30,16 +31,18 @@ export function MedicationLabelPrint({ prescription }: MedicationLabelPrintProps
       <div className="no-print flex items-center justify-between border-b pb-4 bg-slate-50 p-4 rounded-md">
         <div className="flex items-center gap-3">
           <Button asChild variant="outline" size="sm">
-            <Link href={`/prescriptions/${prescription.id}`}>
-              &larr; Back to Prescription
+            <Link href={`/prescriptions/${prescription.id}`} className="flex items-center gap-1.5">
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Prescription</span>
             </Link>
           </Button>
           <span className="text-sm font-medium text-slate-700">
             Print Preview: {prescription.prescriptionNumber} ({prescription.items.length} labels)
           </span>
         </div>
-        <Button onClick={handlePrint} size="sm">
-          🖨 Print Labels (Browser Print)
+        <Button onClick={handlePrint} size="sm" className="flex items-center gap-1.5">
+          <Printer className="h-3.5 w-3.5" />
+          <span>Print Labels (Browser Print)</span>
         </Button>
       </div>
 

@@ -8,6 +8,7 @@ import { PrescriptionItemsTable } from "@/components/prescription/prescription-i
 import { AuditLogTimeline } from "@/components/prescription/audit-log-timeline";
 import { Button } from "@/components/ui/button";
 import { formatDate, calculateAge } from "@/lib/utils";
+import { ArrowLeft, Printer, ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,10 @@ export default async function PrescriptionDetailPage({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href="/">&larr; Back to Workbench</Link>
+              <Link href="/" className="flex items-center gap-1.5">
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Back to Workbench</span>
+              </Link>
             </Button>
             <span className="font-mono text-xs text-slate-400">/</span>
             <span className="font-mono text-xs font-bold text-slate-700">
@@ -55,14 +59,17 @@ export default async function PrescriptionDetailPage({
               <Link
                 href={`/track/${prescription.queueEntry.queueCode}`}
                 target="_blank"
+                className="flex items-center gap-1.5"
               >
-                Track Queue ({prescription.queueEntry.queueCode}) ↗
+                <span>Track Queue ({prescription.queueEntry.queueCode})</span>
+                <ExternalLink className="h-3.5 w-3.5" />
               </Link>
             </Button>
           )}
           <Button asChild size="sm">
-            <Link href={`/prescriptions/${prescription.id}/label`}>
-              🖨 Print Medication Labels
+            <Link href={`/prescriptions/${prescription.id}/label`} className="flex items-center gap-1.5">
+              <Printer className="h-3.5 w-3.5" />
+              <span>Print Medication Labels</span>
             </Link>
           </Button>
         </div>

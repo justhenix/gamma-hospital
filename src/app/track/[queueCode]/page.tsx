@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/workbench/status-badge";
 import { Button } from "@/components/ui/button";
 import { maskName, formatTimeOnly } from "@/lib/utils";
 import { PRESCRIPTION_STATUSES, type PrescriptionStatus } from "@/lib/constants";
+import { AlertTriangle, CheckCircle2, Check } from "lucide-react";
 import Link from "next/link";
 
 interface TrackerData {
@@ -149,7 +150,10 @@ export default function PatientTrackerPage() {
           {/* Clarification Alert if needed */}
           {data.status === "NEEDS_CLARIFICATION" && (
             <div className="p-4 rounded-md border border-amber-300 bg-amber-50 text-amber-900 text-xs space-y-1">
-              <div className="font-bold">⚠️ Resep Sedang Dikonfirmasi</div>
+              <div className="font-bold flex items-center gap-1.5">
+                <AlertTriangle className="h-4 w-4 text-amber-700" />
+                <span>Resep Sedang Dikonfirmasi</span>
+              </div>
               <p>
                 Apoteker sedang melakukan konfirmasi teknis ke dokter peresep. Anda tidak perlu khawatir, antrean Anda akan segera dilanjutkan setelah konfirmasi selesai.
               </p>
@@ -159,7 +163,10 @@ export default function PatientTrackerPage() {
           {/* Pickup Banner if Ready */}
           {data.status === "READY_FOR_PICKUP" && (
             <div className="p-4 rounded-md border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-center space-y-1">
-              <div className="font-bold text-base">🎉 Obat Anda Sudah Siap!</div>
+              <div className="font-bold text-base flex items-center justify-center gap-1.5">
+                <CheckCircle2 className="h-5 w-5 text-emerald-700" />
+                <span>Obat Anda Sudah Siap!</span>
+              </div>
               <p className="text-xs">
                 Silakan menuju loket penyerahan obat farmasi dan tunjukkan nomor antrean <strong>{data.queueCode}</strong>.
               </p>
@@ -197,7 +204,7 @@ export default function PatientTrackerPage() {
                           : "bg-slate-100 text-slate-400"
                       }`}
                     >
-                      {isPassed ? "✓" : idx + 1}
+                      {isPassed ? <Check className="h-3.5 w-3.5" /> : idx + 1}
                     </div>
                     <div className="flex-1">
                       <div className="font-bold text-slate-900">{step.title}</div>

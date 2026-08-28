@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/workbench/status-badge";
 import { formatTimeOnly } from "@/lib/utils";
 import type { PrescriptionListItem } from "@/server/data-access/prescriptions";
+import { ArrowRight } from "lucide-react";
 
 interface QueueTableProps {
   initialItems: PrescriptionListItem[];
@@ -140,8 +141,9 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="outline">
-                      <Link href={`/prescriptions/${item.id}`}>
-                        Detail &rarr;
+                      <Link href={`/prescriptions/${item.id}`} className="flex items-center gap-1">
+                        <span>Detail</span>
+                        <ArrowRight className="h-3 w-3" />
                       </Link>
                     </Button>
                   </TableCell>

@@ -4,6 +4,7 @@ import { getPrescriptionsList } from "@/server/data-access/prescriptions";
 import { QueueTable } from "@/components/workbench/queue-table";
 import { PRESCRIPTION_STATUSES, type PrescriptionStatus } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -48,8 +49,9 @@ export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps
         </div>
         <div className="flex items-center gap-2">
           <Button asChild size="sm" variant="outline">
-            <Link href="/display" target="_blank">
-              Open TV Display Board ↗
+            <Link href="/display" target="_blank" className="flex items-center gap-1.5">
+              <span>Open TV Display Board</span>
+              <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </Button>
         </div>

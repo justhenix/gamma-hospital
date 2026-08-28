@@ -9,6 +9,7 @@ import {
   type PrescriptionStatus,
 } from "@/lib/constants";
 import { Input } from "@/components/ui/input";
+import { AlertTriangle, ArrowRight } from "lucide-react";
 
 interface StatusActionButtonsProps {
   prescriptionId: string;
@@ -85,8 +86,10 @@ export function StatusActionButtons({
                 size="sm"
                 disabled={isPending}
                 onClick={() => setShowClarificationInput((prev) => !prev)}
+                className="flex items-center gap-1.5"
               >
-                ⚠ Flag: {meta.label} ({meta.labelId})
+                <AlertTriangle className="h-3.5 w-3.5" />
+                <span>Flag: {meta.label} ({meta.labelId})</span>
               </Button>
             );
           }
@@ -99,8 +102,10 @@ export function StatusActionButtons({
               size="sm"
               disabled={isPending}
               onClick={() => handleTransition(nextStatus)}
+              className="flex items-center gap-1.5"
             >
-              &rarr; Advance to {meta.label} ({meta.labelId})
+              <ArrowRight className="h-3.5 w-3.5" />
+              <span>Advance to {meta.label} ({meta.labelId})</span>
             </Button>
           );
         })}
