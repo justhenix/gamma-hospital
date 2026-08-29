@@ -110,15 +110,15 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                       : "hover:bg-slate-50"
                   }`}
                 >
-                  <TableCell className="text-center font-mono text-xs text-slate-400">
+                  <TableCell className="text-center font-sans tabular-nums text-xs text-slate-400">
                     {index + 1}
                   </TableCell>
-                  <TableCell className="font-mono font-bold text-base">
+                  <TableCell className="font-sans tabular-nums font-bold text-base text-slate-900">
                     {item.queueEntry?.queueCode || "-"}
                   </TableCell>
                   <TableCell>
                     <div className="font-semibold text-slate-900">{item.patient.name}</div>
-                    <div className="font-mono text-xs text-slate-500">
+                    <div className="font-sans tabular-nums text-xs text-slate-500">
                       {item.patient.mrn} • {item.patient.gender === "M" ? "L" : "P"}
                     </div>
                   </TableCell>
@@ -127,22 +127,22 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                     <div className="text-xs text-slate-500">{item.doctorName}</div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm font-mono">
+                    <div className="text-sm font-sans tabular-nums font-medium text-slate-900">
                       {item.itemCounts.total} items
                     </div>
-                    <div className="text-xs text-slate-500 font-mono">
+                    <div className="text-xs text-slate-500">
                       {item.itemCounts.ready} {m.item_type_ready()} | {item.itemCounts.compounded} {m.item_type_compounded()}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className={`text-xs font-mono font-medium ${item.classification ? "text-slate-700" : "text-amber-600"}`}>
+                    <span className={`text-xs font-medium ${item.classification ? "text-slate-700" : "text-amber-600"}`}>
                       {getClassificationLabel(item.classification)}
                     </span>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={item.status} />
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-slate-500">
+                  <TableCell className="font-sans tabular-nums text-xs text-slate-500">
                     {formatTimeOnly(item.createdAt)}
                   </TableCell>
                   <TableCell className="text-right">
