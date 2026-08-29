@@ -12,7 +12,7 @@ import {
 } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { createAuditLog } from "./audit";
-import { ALLOWED_STATUS_TRANSITIONS, type PrescriptionStatus } from "@/lib/constants";
+import { ALLOWED_STATUS_TRANSITIONS, type PrescriptionStatus, type ClassificationType } from "@/lib/constants";
 
 export interface PrescriptionListItem {
   id: string;
@@ -20,6 +20,7 @@ export interface PrescriptionListItem {
   doctorName: string;
   department: string;
   status: PrescriptionStatus;
+  classification: ClassificationType | null;
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -71,6 +72,7 @@ export async function getPrescriptionsList(
       doctorName: row.doctorName,
       department: row.department,
       status: row.status as PrescriptionStatus,
+      classification: (row.classification as ClassificationType | null) || null,
       notes: row.notes,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -198,4 +200,40 @@ export async function recordLabelPrint(prescriptionId: string, actor = "Staff Fa
     notes: "Medication label printed",
   });
   return { success: true };
+}
+
+export async function updatePrescriptionClassification(
+  prescriptionId: string,
+  newClassification: ClassificationType,
+  actor = "Staff Farmasi"
+) {
+  const current = await db.query.prescriptions.findFirst({
+    where: eq(prescriptions.id, prescriptionId),
+  });
+
+  if (!current) {
+    throw new Error(`Prescription with ID ${prescriptionId} not found`);
+  }
+
+  const previousClassification = current.classification;
+
+  await db
+    .update(prescriptions)
+    .set({
+      classification: newClassification,
+      updatedAt: new Date(),
+    })
+    .where(eq(prescriptions.id, prescriptionId));
+
+  await createAuditLog({
+    entityType: "prescription",
+    entityId: prescriptionId,
+    action: "CLASSIFICATION_CHANGE",
+    fromStatus: previousClassification || null,
+    toStatus: newClassification,
+    actor,
+    notes: `Classification changed from ${previousClassification || "unset"} to ${newClassification}`,
+  });
+
+  return { success: true, from: previousClassification, to: newClassification };
 }

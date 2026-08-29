@@ -36,6 +36,9 @@ export const prescriptions = sqliteTable("prescriptions", {
   })
     .notNull()
     .default("WAITING"),
+  classification: text("classification", {
+    enum: ["obat_jadi", "racikan"],
+  }),
   notes: text("notes"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()

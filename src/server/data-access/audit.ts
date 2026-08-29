@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 export async function createAuditLog(params: {
   entityType: "prescription" | "queue";
   entityId: string;
-  action: "STATUS_CHANGE" | "CREATE" | "NOTE_UPDATE" | "PRINT_LABEL";
+  action: "STATUS_CHANGE" | "CREATE" | "NOTE_UPDATE" | "PRINT_LABEL" | "CLASSIFICATION_CHANGE";
   fromStatus?: string | null;
   toStatus?: string | null;
   actor?: string;

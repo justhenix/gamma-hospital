@@ -85,6 +85,26 @@ async function seed() {
       createdAt: new Date(now - 15 * minute),
       updatedAt: new Date(now - 15 * minute),
     },
+    {
+      id: "pat_07",
+      mrn: "RM-082907",
+      name: "Hasan Basri",
+      birthDate: "1958-03-22",
+      gender: "M",
+      phone: "081345671234",
+      createdAt: new Date(now - 8 * minute),
+      updatedAt: new Date(now - 8 * minute),
+    },
+    {
+      id: "pat_08",
+      mrn: "RM-082908",
+      name: "Rina Kartini",
+      birthDate: "2020-01-15",
+      gender: "F",
+      phone: "082198765432",
+      createdAt: new Date(now - 3 * minute),
+      updatedAt: new Date(now - 3 * minute),
+    },
   ];
 
   await db.insert(patients).values(mockPatients);
@@ -99,6 +119,7 @@ async function seed() {
       doctorName: "dr. Hendra Wijaya, Sp.PD",
       department: "Poli Penyakit Dalam",
       status: "COMPLETED" as const,
+      classification: "obat_jadi" as const,
       notes: "Pasien riwayat gastritis ringan.",
       createdAt: new Date(now - 110 * minute),
       updatedAt: new Date(now - 20 * minute),
@@ -110,6 +131,7 @@ async function seed() {
       doctorName: "dr. Nurul Hidayah, Sp.OG",
       department: "Poli Kebidanan & Kandungan",
       status: "READY_FOR_PICKUP" as const,
+      classification: "obat_jadi" as const,
       notes: "Suplemen kehamilan trimester kedua.",
       createdAt: new Date(now - 80 * minute),
       updatedAt: new Date(now - 10 * minute),
@@ -121,6 +143,7 @@ async function seed() {
       doctorName: "dr. Agus Prasetyo, Sp.JP",
       department: "Poli Jantung & Pembuluh Darah",
       status: "PREPARING" as const,
+      classification: "racikan" as const,
       notes: "Obat rutin hipertensi dan racikan kapsul penurun kolesterol.",
       createdAt: new Date(now - 55 * minute),
       updatedAt: new Date(now - 15 * minute),
@@ -132,6 +155,7 @@ async function seed() {
       doctorName: "dr. Maya Kartika, Sp.A",
       department: "Poli Anak",
       status: "PREPARING" as const,
+      classification: "racikan" as const,
       notes: "Racikan puyer batuk pilek anak (BB: 16 kg).",
       createdAt: new Date(now - 40 * minute),
       updatedAt: new Date(now - 12 * minute),
@@ -143,6 +167,7 @@ async function seed() {
       doctorName: "dr. Rizki Pratama, Sp.P",
       department: "Poli Paru",
       status: "VERIFIED" as const,
+      classification: "obat_jadi" as const,
       notes: "Antibiotik oral + inhaler.",
       createdAt: new Date(now - 25 * minute),
       updatedAt: new Date(now - 5 * minute),
@@ -154,8 +179,33 @@ async function seed() {
       doctorName: "dr. Eko Wardoyo, Sp.B",
       department: "Instalasi Gawat Darurat (IGD)",
       status: "NEEDS_CLARIFICATION" as const,
+      classification: "obat_jadi" as const,
       notes: "Konfirmasi ulang dosis analgesik injeksi ke dokter jaga IGD.",
       createdAt: new Date(now - 10 * minute),
+      updatedAt: new Date(now - 2 * minute),
+    },
+    {
+      id: "rx_07",
+      prescriptionNumber: "RX-2026-007",
+      patientId: "pat_07",
+      doctorName: "dr. Adi Nugroho, Sp.PD",
+      department: "Rawat Inap Lantai 3",
+      status: "WAITING" as const,
+      classification: null,
+      notes: "Pasien DM tipe 2, kontrol gula darah rutin.",
+      createdAt: new Date(now - 5 * minute),
+      updatedAt: new Date(now - 5 * minute),
+    },
+    {
+      id: "rx_08",
+      prescriptionNumber: "RX-2026-008",
+      patientId: "pat_08",
+      doctorName: "dr. Maya Kartika, Sp.A",
+      department: "Poli Anak",
+      status: "WAITING" as const,
+      classification: null,
+      notes: "Demam 3 hari, batuk berdahak. BB: 12 kg.",
+      createdAt: new Date(now - 2 * minute),
       updatedAt: new Date(now - 2 * minute),
     },
   ];
@@ -201,7 +251,7 @@ async function seed() {
     {
       id: "q_04",
       prescriptionId: "rx_04",
-      queueCode: "B-001", // B for compounded
+      queueCode: "B-001",
       displayNumber: "001",
       status: "PREPARING" as const,
       calledAt: null,
@@ -229,6 +279,28 @@ async function seed() {
       calledAt: null,
       completedAt: null,
       createdAt: new Date(now - 10 * minute),
+      updatedAt: new Date(now - 2 * minute),
+    },
+    {
+      id: "q_07",
+      prescriptionId: "rx_07",
+      queueCode: "A-006",
+      displayNumber: "006",
+      status: "WAITING" as const,
+      calledAt: null,
+      completedAt: null,
+      createdAt: new Date(now - 5 * minute),
+      updatedAt: new Date(now - 5 * minute),
+    },
+    {
+      id: "q_08",
+      prescriptionId: "rx_08",
+      queueCode: "B-002",
+      displayNumber: "002",
+      status: "WAITING" as const,
+      calledAt: null,
+      completedAt: null,
+      createdAt: new Date(now - 2 * minute),
       updatedAt: new Date(now - 2 * minute),
     },
   ];
@@ -369,6 +441,58 @@ async function seed() {
       notes: "Perlu konfirmasi ulang durasi pemberian",
       createdAt: new Date(now - 10 * minute),
     },
+
+    // rx_07 items (WAITING - DM)
+    {
+      id: "item_11",
+      prescriptionId: "rx_07",
+      itemName: "Metformin 500mg Tablet",
+      type: "READY" as const,
+      quantity: 30,
+      unit: "tablet",
+      dosage: "500 mg",
+      signa: "2 x 1 tablet sehari sesudah makan",
+      notes: "Obat diabetes oral",
+      createdAt: new Date(now - 5 * minute),
+    },
+    {
+      id: "item_12",
+      prescriptionId: "rx_07",
+      itemName: "Glimepiride 2mg Tablet",
+      type: "READY" as const,
+      quantity: 30,
+      unit: "tablet",
+      dosage: "2 mg",
+      signa: "1 x 1 tablet sehari sebelum makan pagi",
+      notes: "Diminum sebelum sarapan",
+      createdAt: new Date(now - 5 * minute),
+    },
+
+    // rx_08 items (WAITING - Puyer Anak)
+    {
+      id: "item_13",
+      prescriptionId: "rx_08",
+      itemName: "Racikan Puyer Demam Anak (Paracetamol 120mg + Cetirizine 2mg)",
+      type: "COMPOUNDED" as const,
+      quantity: 10,
+      unit: "bungkus puyer",
+      dosage: "1 bungkus",
+      signa: "3 x 1 bungkus puyer sehari (prn demam)",
+      notes: "BB 12 kg, usia 6 tahun",
+      createdAt: new Date(now - 2 * minute),
+    },
+    {
+      id: "item_14",
+      prescriptionId: "rx_08",
+      itemName: "Amoxicillin Sirup Kering 125mg/5ml",
+      type: "READY" as const,
+      quantity: 1,
+      unit: "botol (60ml)",
+      dosage: "125 mg / 5 ml",
+      signa: "3 x 1 sendok teh (5ml) sehari sesudah makan",
+      notes: "Larutkan dengan air matang, habiskan",
+      createdAt: new Date(now - 2 * minute),
+    },
   ];
 
   await db.insert(prescriptionItems).values(mockItems);
@@ -402,6 +526,17 @@ async function seed() {
       id: "aud_03",
       entityType: "prescription",
       entityId: "rx_01",
+      action: "CLASSIFICATION_CHANGE",
+      fromStatus: null,
+      toStatus: "obat_jadi",
+      actor: "Apt. Nuraini, S.Farm",
+      notes: "Klasifikasi: semua item obat jadi",
+      createdAt: new Date(now - 94 * minute),
+    },
+    {
+      id: "aud_04",
+      entityType: "prescription",
+      entityId: "rx_01",
       action: "STATUS_CHANGE",
       fromStatus: "VERIFIED",
       toStatus: "PREPARING",
@@ -410,7 +545,7 @@ async function seed() {
       createdAt: new Date(now - 80 * minute),
     },
     {
-      id: "aud_04",
+      id: "aud_05",
       entityType: "prescription",
       entityId: "rx_01",
       action: "PRINT_LABEL",
@@ -421,7 +556,7 @@ async function seed() {
       createdAt: new Date(now - 75 * minute),
     },
     {
-      id: "aud_05",
+      id: "aud_06",
       entityType: "prescription",
       entityId: "rx_01",
       action: "STATUS_CHANGE",
@@ -432,7 +567,7 @@ async function seed() {
       createdAt: new Date(now - 25 * minute),
     },
     {
-      id: "aud_06",
+      id: "aud_07",
       entityType: "prescription",
       entityId: "rx_01",
       action: "STATUS_CHANGE",
@@ -445,7 +580,7 @@ async function seed() {
 
     // rx_02 audit logs
     {
-      id: "aud_07",
+      id: "aud_08",
       entityType: "prescription",
       entityId: "rx_02",
       action: "CREATE",
@@ -456,7 +591,7 @@ async function seed() {
       createdAt: new Date(now - 80 * minute),
     },
     {
-      id: "aud_08",
+      id: "aud_09",
       entityType: "prescription",
       entityId: "rx_02",
       action: "STATUS_CHANGE",
@@ -467,7 +602,7 @@ async function seed() {
       createdAt: new Date(now - 60 * minute),
     },
     {
-      id: "aud_09",
+      id: "aud_10",
       entityType: "prescription",
       entityId: "rx_02",
       action: "STATUS_CHANGE",
@@ -478,7 +613,7 @@ async function seed() {
       createdAt: new Date(now - 40 * minute),
     },
     {
-      id: "aud_10",
+      id: "aud_11",
       entityType: "prescription",
       entityId: "rx_02",
       action: "STATUS_CHANGE",
@@ -491,7 +626,7 @@ async function seed() {
 
     // rx_06 audit logs
     {
-      id: "aud_11",
+      id: "aud_12",
       entityType: "prescription",
       entityId: "rx_06",
       action: "STATUS_CHANGE",
@@ -499,6 +634,32 @@ async function seed() {
       toStatus: "NEEDS_CLARIFICATION",
       actor: "Apt. Nuraini, S.Farm",
       notes: "Konfirmasi ke dr. Eko (IGD) mengenai dosis & interval ketorolac",
+      createdAt: new Date(now - 2 * minute),
+    },
+
+    // rx_07 audit logs (new WAITING)
+    {
+      id: "aud_13",
+      entityType: "prescription",
+      entityId: "rx_07",
+      action: "CREATE",
+      fromStatus: null,
+      toStatus: "WAITING",
+      actor: "HIS Bridge Mock",
+      notes: "Resep diterima dari Rawat Inap Lantai 3",
+      createdAt: new Date(now - 5 * minute),
+    },
+
+    // rx_08 audit logs (new WAITING)
+    {
+      id: "aud_14",
+      entityType: "prescription",
+      entityId: "rx_08",
+      action: "CREATE",
+      fromStatus: null,
+      toStatus: "WAITING",
+      actor: "HIS Bridge Mock",
+      notes: "Resep diterima dari Poli Anak",
       createdAt: new Date(now - 2 * minute),
     },
   ];

@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import {
   updatePrescriptionStatus,
   recordLabelPrint,
+  updatePrescriptionClassification,
 } from "@/server/data-access/prescriptions";
 import {
   updatePrescriptionStatusSchema,
   recordLabelPrintSchema,
+  updateClassificationSchema,
 } from "@/server/schemas/prescription-schemas";
 
 export async function updateStatusAction(formData: FormData) {
@@ -86,6 +88,34 @@ export async function recordPrintAction(prescriptionId: string, actor = "Staff F
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to record print",
+    };
+  }
+}
+
+export async function updateClassificationAction(input: {
+  prescriptionId: string;
+  classification: string;
+  actor?: string;
+}) {
+  const parsed = updateClassificationSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.format() };
+  }
+
+  try {
+    const result = await updatePrescriptionClassification(
+      parsed.data.prescriptionId,
+      parsed.data.classification,
+      parsed.data.actor
+    );
+
+    revalidatePath("/");
+    revalidatePath(`/prescriptions/${parsed.data.prescriptionId}`);
+    return { success: true, result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update classification",
     };
   }
 }

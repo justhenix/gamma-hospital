@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 import { getPrescriptionDetailById } from "@/server/data-access/prescriptions";
 import { StatusBadge } from "@/components/workbench/status-badge";
 import { StatusActionButtons } from "@/components/prescription/status-action-buttons";
+import { ClassificationSelector } from "@/components/prescription/classification-selector";
 import { PrescriptionItemsTable } from "@/components/prescription/prescription-items-table";
 import { AuditLogTimeline } from "@/components/prescription/audit-log-timeline";
 import { Button } from "@/components/ui/button";
 import { formatDate, calculateAge } from "@/lib/utils";
+import { getClassificationLabel, type ClassificationType } from "@/lib/constants";
 import { ArrowLeft, Printer, ExternalLink } from "lucide-react";
 import * as m from "@/paraglide/messages.js";
 
@@ -126,6 +128,12 @@ export default async function PrescriptionDetailPage({
               </span>
             </div>
             <div>
+              <span className="text-slate-400">Klasifikasi:</span>{" "}
+              <span className={`font-bold ${prescription.classification ? "text-slate-900" : "text-amber-600"}`}>
+                {getClassificationLabel(prescription.classification as ClassificationType | null)}
+              </span>
+            </div>
+            <div>
               <span className="text-slate-400">Received:</span>{" "}
               {formatDate(prescription.createdAt)}
             </div>
@@ -141,6 +149,12 @@ export default async function PrescriptionDetailPage({
           )}
         </div>
       </div>
+
+      {/* Classification Selector */}
+      <ClassificationSelector
+        prescriptionId={prescription.id}
+        currentClassification={prescription.classification as ClassificationType | null}
+      />
 
       {/* Status Action Transitions */}
       <StatusActionButtons

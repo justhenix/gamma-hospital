@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/workbench/status-badge";
 import { formatTimeOnly } from "@/lib/utils";
 import type { PrescriptionListItem } from "@/server/data-access/prescriptions";
+import { getClassificationLabel, type ClassificationType } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 import * as m from "@/paraglide/messages.js";
 
@@ -90,6 +91,7 @@ export function QueueTable({ initialItems }: QueueTableProps) {
               <TableHead>{m.table_patient_mrn()}</TableHead>
               <TableHead>{m.table_dept_doctor()}</TableHead>
               <TableHead>{m.table_items()}</TableHead>
+              <TableHead>Klasifikasi</TableHead>
               <TableHead>{m.table_status()}</TableHead>
               <TableHead>{m.table_time()}</TableHead>
               <TableHead className="text-right">{m.table_action()}</TableHead>
@@ -131,6 +133,11 @@ export function QueueTable({ initialItems }: QueueTableProps) {
                     <div className="text-xs text-slate-500 font-mono">
                       {item.itemCounts.ready} {m.item_type_ready()} | {item.itemCounts.compounded} {m.item_type_compounded()}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`text-xs font-mono font-medium ${item.classification ? "text-slate-700" : "text-amber-600"}`}>
+                      {getClassificationLabel(item.classification)}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={item.status} />

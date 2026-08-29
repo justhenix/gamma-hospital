@@ -19,6 +19,13 @@ export const recordLabelPrintSchema = z.object({
   actor: z.string().min(1).default("Staff Farmasi"),
 });
 
+export const updateClassificationSchema = z.object({
+  prescriptionId: z.string().min(1, "Prescription ID is required"),
+  classification: z.enum(["obat_jadi", "racikan"]),
+  actor: z.string().min(1).default("Staff Farmasi"),
+});
+
 export type UpdatePrescriptionStatusInput = z.infer<typeof updatePrescriptionStatusSchema>;
 export type UpdatePrescriptionNotesInput = z.infer<typeof updatePrescriptionNotesSchema>;
 export type RecordLabelPrintInput = z.infer<typeof recordLabelPrintSchema>;
+export type UpdateClassificationInput = z.infer<typeof updateClassificationSchema>;

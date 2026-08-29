@@ -64,3 +64,17 @@ export function getItemTypeLabel(type: ItemType | string): string {
       return type;
   }
 }
+
+export const CLASSIFICATION_TYPES = ["obat_jadi", "racikan"] as const;
+export type ClassificationType = (typeof CLASSIFICATION_TYPES)[number];
+
+export function getClassificationLabel(classification: ClassificationType | string | null): string {
+  switch (classification) {
+    case "obat_jadi":
+      return m.item_type_ready();
+    case "racikan":
+      return m.item_type_compounded();
+    default:
+      return "Belum Diklasifikasi";
+  }
+}
