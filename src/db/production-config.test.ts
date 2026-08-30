@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-test("Turso marketplace variables configure the runtime and migration client", async () => {
+test("Turso marketplace variables override local database defaults", async () => {
   const previous = {
     databaseUrl: process.env.DATABASE_URL,
     databaseAuthToken: process.env.DATABASE_AUTH_TOKEN,
@@ -9,8 +9,8 @@ test("Turso marketplace variables configure the runtime and migration client", a
     tursoAuthToken: process.env.TURSO_AUTH_TOKEN,
   };
 
-  process.env.DATABASE_URL = "";
-  process.env.DATABASE_AUTH_TOKEN = "";
+  process.env.DATABASE_URL = "file:local.db";
+  process.env.DATABASE_AUTH_TOKEN = "local-token";
   process.env.TURSO_DATABASE_URL = "libsql://example.turso.io";
   process.env.TURSO_AUTH_TOKEN = "test-token";
 

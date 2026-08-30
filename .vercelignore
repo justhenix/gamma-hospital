@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+.webwright-cleanup/
+.webwright-smoke/
+tmp/
