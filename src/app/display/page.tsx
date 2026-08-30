@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { maskName } from "@/lib/utils";
 import {
+  formatDisplayClock,
   getDisplayPresentation,
   type DisplayPayload,
 } from "./display-model";
@@ -15,22 +15,9 @@ export default function DisplayPage() {
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleTimeString("id-ID", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
-      setCurrentDate(
-        now.toLocaleDateString("id-ID", {
-          weekday: "long",
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        })
-      );
+      const clock = formatDisplayClock(new Date());
+      setCurrentTime(clock.time);
+      setCurrentDate(clock.date);
     };
 
     updateTime();
@@ -106,7 +93,7 @@ export default function DisplayPage() {
                   </div>
                 </div>
                 <div className="mt-6 text-2xl font-semibold text-[#1F261B] lg:text-3xl">
-                  {maskName(heroReady.patientName)}
+                  {heroReady.patientName}
                 </div>
                 <div className="mt-3 text-lg font-semibold text-[#587E00] lg:text-2xl">
                   Silakan menuju loket farmasi
@@ -135,7 +122,7 @@ export default function DisplayPage() {
                         {item.queueCode}
                       </div>
                       <div className="mt-1 truncate text-sm font-semibold text-[#66705F] lg:text-base">
-                        {maskName(item.patientName)}
+                        {item.patientName}
                       </div>
                     </div>
                   ))
@@ -164,24 +151,16 @@ export default function DisplayPage() {
               preparing.map((item) => (
                 <div
                   key={item.queueCode}
-                  className="grid grid-cols-[7rem_minmax(0,1fr)_auto] items-center gap-4 py-5"
+                  className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-4 py-5"
                 >
                   <div className="font-heading text-3xl font-extrabold tabular-nums tracking-tight text-[#587E00] lg:text-4xl">
                     {item.queueCode}
                   </div>
                   <div className="min-w-0">
                     <div className="truncate text-base font-semibold lg:text-lg">
-                      {maskName(item.patientName)}
-                    </div>
-                    <div className="mt-1 truncate text-sm font-medium text-[#66705F]">
-                      {item.department || "Farmasi"}
+                      {item.patientName}
                     </div>
                   </div>
-                  {item.hasCompounded ? (
-                    <div className="text-sm font-bold text-[#66705F]">
-                      Racikan
-                    </div>
-                  ) : null}
                 </div>
               ))
             ) : (

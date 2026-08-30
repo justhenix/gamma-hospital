@@ -1,8 +1,9 @@
 import { db } from "@/db";
-import { queueEntries, prescriptions, patients, prescriptionItems } from "@/db/schema";
-import { eq, desc, inArray, or } from "drizzle-orm";
+import { queueEntries } from "@/db/schema";
+import { eq, desc, inArray } from "drizzle-orm";
 import { type PrescriptionStatus } from "@/lib/constants";
 import { toPublicTrackerPayload } from "@/app/track/public-tracker-model";
+import { toPublicDisplayItem } from "@/app/display/display-model";
 
 export async function getQueueByCode(queueCode: string) {
   const queue = await db.query.queueEntries.findFirst({
@@ -45,11 +46,20 @@ export async function getDisplayBoardData() {
       "READY_FOR_PICKUP",
       "COMPLETED",
     ]),
+    columns: {
+      queueCode: true,
+      displayNumber: true,
+      status: true,
+    },
     with: {
       prescription: {
+        columns: {},
         with: {
-          patient: true,
-          items: true,
+          patient: {
+            columns: {
+              name: true,
+            },
+          },
         },
       },
     },
@@ -65,30 +75,23 @@ export async function getDisplayBoardData() {
   const completed = entries.filter((e) => e.status === "COMPLETED").slice(0, 5);
 
   return {
-    preparing: preparing.map((e) => ({
+    preparing: preparing.map((e) => toPublicDisplayItem({
       queueCode: e.queueCode,
       displayNumber: e.displayNumber,
       status: e.status as PrescriptionStatus,
       patientName: e.prescription.patient.name,
-      doctorName: e.prescription.doctorName,
-      department: e.prescription.department,
-      hasCompounded: e.prescription.items.some((i) => i.type === "COMPOUNDED"),
     })),
-    readyForPickup: readyForPickup.map((e) => ({
+    readyForPickup: readyForPickup.map((e) => toPublicDisplayItem({
       queueCode: e.queueCode,
       displayNumber: e.displayNumber,
       status: e.status as PrescriptionStatus,
       patientName: e.prescription.patient.name,
-      calledAt: e.calledAt,
-      doctorName: e.prescription.doctorName,
-      department: e.prescription.department,
     })),
-    completed: completed.map((e) => ({
+    completed: completed.map((e) => toPublicDisplayItem({
       queueCode: e.queueCode,
       displayNumber: e.displayNumber,
       status: e.status as PrescriptionStatus,
       patientName: e.prescription.patient.name,
-      completedAt: e.completedAt,
     })),
     timestamp: new Date().toISOString(),
   };
