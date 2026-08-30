@@ -8,7 +8,6 @@ import {
   getClassificationLabel,
   type ClassificationType,
 } from "@/lib/constants";
-import { Tag } from "lucide-react";
 
 interface ClassificationSelectorProps {
   prescriptionId: string;
@@ -40,9 +39,8 @@ export function ClassificationSelector({
 
   return (
     <div className="border rounded-md p-3 bg-white space-y-2">
-      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase font-mono">
-        <Tag className="h-3.5 w-3.5" />
-        <span>Klasifikasi Resep</span>
+      <div className="text-sm font-semibold text-foreground">
+        Klasifikasi Resep
       </div>
 
       {errorMessage && (
@@ -53,12 +51,12 @@ export function ClassificationSelector({
 
       <div className="flex items-center gap-2">
         {currentClassification && (
-          <span className="text-xs font-mono text-slate-600">
+          <span className="text-xs font-sans text-slate-600">
             Saat ini: <strong>{getClassificationLabel(currentClassification)}</strong>
           </span>
         )}
         {!currentClassification && (
-          <span className="text-xs font-mono text-amber-600 font-semibold">
+          <span className="text-xs font-sans text-amber-600 font-semibold">
             Belum diklasifikasi
           </span>
         )}

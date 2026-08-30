@@ -2,15 +2,25 @@ import { db } from "@/db";
 import { queueEntries, prescriptions, patients, prescriptionItems } from "@/db/schema";
 import { eq, desc, inArray, or } from "drizzle-orm";
 import { type PrescriptionStatus } from "@/lib/constants";
+import { toPublicTrackerPayload } from "@/app/track/public-tracker-model";
 
 export async function getQueueByCode(queueCode: string) {
   const queue = await db.query.queueEntries.findFirst({
     where: eq(queueEntries.queueCode, queueCode.toUpperCase()),
+    columns: {
+      queueCode: true,
+      status: true,
+      updatedAt: true,
+    },
     with: {
       prescription: {
+        columns: {},
         with: {
-          patient: true,
-          items: true,
+          patient: {
+            columns: {
+              name: true,
+            },
+          },
         },
       },
     },
@@ -18,31 +28,12 @@ export async function getQueueByCode(queueCode: string) {
 
   if (!queue) return null;
 
-  return {
-    id: queue.id,
+  return toPublicTrackerPayload({
     queueCode: queue.queueCode,
-    displayNumber: queue.displayNumber,
     status: queue.status as PrescriptionStatus,
-    calledAt: queue.calledAt,
-    completedAt: queue.completedAt,
-    createdAt: queue.createdAt,
     updatedAt: queue.updatedAt,
-    prescription: {
-      id: queue.prescription.id,
-      prescriptionNumber: queue.prescription.prescriptionNumber,
-      doctorName: queue.prescription.doctorName,
-      department: queue.prescription.department,
-      status: queue.prescription.status as PrescriptionStatus,
-      patient: {
-        id: queue.prescription.patient.id,
-        mrn: queue.prescription.patient.mrn,
-        name: queue.prescription.patient.name,
-        gender: queue.prescription.patient.gender,
-      },
-      itemCount: queue.prescription.items.length,
-      hasCompounded: queue.prescription.items.some((i) => i.type === "COMPOUNDED"),
-    },
-  };
+    patientName: queue.prescription.patient.name,
+  });
 }
 
 export async function getDisplayBoardData() {

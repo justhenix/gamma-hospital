@@ -14,7 +14,26 @@
 
 ## 2. Color Palette (OKLCH Tokens)
 
-All interface colors must derive from these exact theme tokens:
+All general application colors must derive from these exact theme tokens. The public-facing hospital signage may additionally use the canonical RS Indriati brand token defined below.
+
+### RS Indriati Brand Token
+
+```css
+--hospital-brand: #7DBA00;
+```
+
+- `#7DBA00` is the canonical RS Indriati green observed in the hospital's official visual identity and website.
+- Use it deliberately for hospital identity, primary public-signage emphasis, queue callouts, selected/active states, and restrained structural accents.
+- Do not turn the whole interface green. Maintain large white/off-white neutral surfaces and dark text for clinical legibility.
+- On a solid `#7DBA00` queue-number field, use white text for maximum distance readability.
+- For smaller green text on white, use a darker accessible derivative (for example `#587E00`) while preserving `#7DBA00` as the recognizable brand anchor.
+- No green gradients, neon glow, pulsing indicators, or decorative green effects.
+
+### Canonical Brand Asset
+
+- The approved RS Indriati logo asset for this repository is `public/rs-indriati-logo.png`.
+- Use the logo as supplied. Do not redraw, recolor, stretch, crop, add effects, or recreate the wordmark with text.
+- Preserve its transparent background and aspect ratio.
 
 ### Light Mode (`data-theme="light"`)
 ```css
@@ -116,10 +135,16 @@ All interface colors must derive from these exact theme tokens:
 - Download PDF streaming option alongside browser print.
 
 ### 5.4 TV Display (`/display`)
-- High-contrast 2-column layout: Ready for Pickup (prominent) vs Preparing.
-- Bold queue codes readable at 5-10 meters distance.
-- Masked patient names (`Si** Ra****`) for privacy.
-- Clean digital clock with 3-second live refresh.
+- This screen is public hospital signage, not a business dashboard. It must occupy the full viewport and visually suppress normal application navigation.
+- Use the canonical RS Indriati logo in the header with a white/off-white hospital-signage surface and `#7DBA00` as the dominant identity/accent color.
+- Keep the 2-column hierarchy: **Siap Diambil** is the dominant left area; **Sedang Disiapkan** is the compact supporting right area.
+- The newest `READY_FOR_PICKUP` queue is the hero callout. Render its queue code as the largest element on screen inside a solid `#7DBA00` field with white sans-serif tabular figures.
+- Remaining ready queues appear in a restrained **Siap Lainnya** strip below the hero area; do not create a grid of generic dashboard cards.
+- Preparing queues use flat rows/dividers with green queue-code emphasis, masked patient names, department, and `Racikan` only when relevant.
+- Bold queue codes must remain readable at roughly 5-10 meters on a typical waiting-room TV. Hero queue numbers may exceed the normal typography scale using responsive `clamp()` sizing.
+- Mask patient names (`Si** Ra****`) and never expose clinical details on this public screen.
+- Keep the clock and Indonesian date large, clean, and visually secondary to the active queue. Data polling remains every 3 seconds; the clock may update every second.
+- Avoid gradients, ticker bars, faux LED displays, decorative arrows, excessive badges, oversized rounded SaaS cards, or imitating the hospital's older website layout. Borrow the brand identity, not dated web chrome.
 
 ### 5.5 Patient Tracker (`/track/[queueCode]`)
 - Single focused status card for mobile and desktop.

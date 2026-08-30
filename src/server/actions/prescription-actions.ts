@@ -46,7 +46,7 @@ export async function updateStatusAction(formData: FormData) {
 
 export async function directUpdateStatusAction(input: {
   prescriptionId: string;
-  newStatus: any;
+  newStatus: string;
   actor?: string;
   notes?: string;
 }) {

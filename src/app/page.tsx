@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getPrescriptionsList } from "@/server/data-access/prescriptions";
-import { QueueTable } from "@/components/workbench/queue-table";
+import { PharmacyWorkbench } from "@/components/workbench/pharmacy-workbench";
 import { PRESCRIPTION_STATUSES, getStatusLabel, type PrescriptionStatus } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
@@ -18,7 +18,7 @@ interface WorkbenchPageProps {
 export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps) {
   const { status } = await searchParams;
   const currentStatus: PrescriptionStatus | "ALL" =
-    status && PRESCRIPTION_STATUSES.includes(status as any)
+    status && (PRESCRIPTION_STATUSES as readonly string[]).includes(status)
       ? (status as PrescriptionStatus)
       : "ALL";
 
@@ -39,12 +39,12 @@ export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
             {m.workbench_title()}
           </h1>
-          <p className="text-xs text-slate-500 font-mono mt-0.5">
+          <p className="text-xs text-muted-foreground mt-1">
             {m.workbench_desc()}
           </p>
         </div>
@@ -59,12 +59,12 @@ export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="flex flex-wrap gap-1.5 border-b pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
         <Button
           asChild
           size="sm"
           variant={currentStatus === "ALL" ? "default" : "outline"}
-          className="text-xs h-8"
+          className="text-xs font-medium h-8"
         >
           <Link href="/">
             {m.all_prescriptions()} ({counts["ALL"] || 0})
@@ -81,7 +81,7 @@ export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps
               asChild
               size="sm"
               variant={isActive ? "default" : "outline"}
-              className="text-xs h-8 font-mono"
+              className="text-xs font-medium h-8"
             >
               <Link href={`/?status=${st}`}>
                 {label} ({count})
@@ -91,8 +91,7 @@ export default async function WorkbenchPage({ searchParams }: WorkbenchPageProps
         })}
       </div>
 
-      {/* Queue Table with Keyboard Navigation */}
-      <QueueTable initialItems={filteredItems} />
+      <PharmacyWorkbench initialItems={filteredItems} />
     </div>
   );
 }

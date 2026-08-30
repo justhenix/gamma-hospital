@@ -3,42 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { StatusBadge } from "@/components/workbench/status-badge";
-import { maskName, formatTimeOnly } from "@/lib/utils";
-import { getStatusLabel, getItemTypeLabel, type PrescriptionStatus } from "@/lib/constants";
+import { formatTimeOnly } from "@/lib/utils";
+import { type PrescriptionStatus } from "@/lib/constants";
 import { AlertTriangle, CheckCircle2, Check } from "lucide-react";
 import * as m from "@/paraglide/messages.js";
-
-interface TrackerData {
-  id: string;
-  queueCode: string;
-  displayNumber: string;
-  status: PrescriptionStatus;
-  calledAt: string | null;
-  completedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  prescription: {
-    id: string;
-    prescriptionNumber: string;
-    doctorName: string;
-    department: string;
-    status: PrescriptionStatus;
-    patient: {
-      id: string;
-      mrn: string;
-      name: string;
-      gender: string;
-    };
-    itemCount: number;
-    hasCompounded: boolean;
-  };
-}
+import type { PublicTrackerPayload } from "../public-tracker-model";
 
 export default function PatientTrackerPage() {
   const params = useParams();
   const queueCode = typeof params.queueCode === "string" ? params.queueCode : "";
 
-  const [data, setData] = useState<TrackerData | null>(null);
+  const [data, setData] = useState<PublicTrackerPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastChecked, setLastChecked] = useState<Date>(new Date());
@@ -86,19 +61,19 @@ export default function PatientTrackerPage() {
     : -1;
 
   return (
-    <div className="max-w-xl mx-auto space-y-6 py-4">
-      {/* Header */}
-      <div className="text-center space-y-1 border-b pb-4">
-        <div className="text-xs font-semibold text-slate-500">
-          {m.app_subtitle()}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-background text-foreground">
+      <div className="mx-auto max-w-xl space-y-6 px-6 py-8 sm:py-10">
+        <div className="space-y-1 border-b border-border pb-4 text-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            {m.app_subtitle()}
+          </div>
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+            {m.tracker_title()}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {m.tracker_subtitle()}
+          </p>
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          {m.tracker_title()}
-        </h1>
-        <p className="text-xs text-slate-500">
-          {m.tracker_subtitle()}
-        </p>
-      </div>
 
       {loading && !data && (
         <div className="text-center p-8 border rounded-lg text-sm text-slate-500">
@@ -115,7 +90,7 @@ export default function PatientTrackerPage() {
       {data && (
         <div className="space-y-6">
           {/* Main Queue Card */}
-          <div className="border rounded-xl p-6 bg-white shadow-sm text-center space-y-3">
+          <div className="rounded-md border border-border bg-card p-6 text-center shadow-sm space-y-3">
             <div className="text-xs text-slate-500 font-medium">
               {m.tracker_your_number()}
             </div>
@@ -126,23 +101,8 @@ export default function PatientTrackerPage() {
               <StatusBadge status={data.status} />
             </div>
 
-            <div className="pt-4 border-t grid grid-cols-2 gap-3 text-xs text-left text-slate-700">
-              <div>
-                <span className="text-slate-400">Pasien:</span>{" "}
-                <strong className="text-slate-900">{maskName(data.prescription.patient.name)}</strong>
-              </div>
-              <div className="text-right">
-                <span className="text-slate-400">No. RM:</span>{" "}
-                <strong className="text-slate-900 font-sans tabular-nums">{data.prescription.patient.mrn}</strong>
-              </div>
-              <div>
-                <span className="text-slate-400">Poli/Dokter:</span>{" "}
-                {data.prescription.department}
-              </div>
-              <div className="text-right">
-                <span className="text-slate-400">Jenis:</span>{" "}
-                {data.prescription.hasCompounded ? getItemTypeLabel("COMPOUNDED") : getItemTypeLabel("READY")}
-              </div>
+            <div className="border-t border-border pt-4 text-sm text-muted-foreground">
+              Pasien: <strong className="text-foreground">{data.patientName}</strong>
             </div>
           </div>
 
@@ -216,11 +176,12 @@ export default function PatientTrackerPage() {
           </div>
 
           {/* Polling Footer Info */}
-          <div className="text-center font-sans tabular-nums text-xs text-slate-400">
-            Terakhir diperbarui: {formatTimeOnly(lastChecked)} (Live Polling)
+          <div className="text-center font-sans tabular-nums text-xs text-muted-foreground">
+            Terakhir diperbarui: {formatTimeOnly(lastChecked)}
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

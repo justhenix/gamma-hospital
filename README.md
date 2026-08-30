@@ -1,107 +1,73 @@
-# Hospital Pharmacy Workbench MVP Scaffold
+# Gamma Hospital Pharmacy
 
-A raw, high-throughput MVP prototype for hospital pharmacy dispensing, queue management, and label printing tailored for **RS Indriati Boyolali** operations.
+Gamma Hospital Pharmacy membantu petugas farmasi memantau antrean resep, menyiapkan obat, mencetak etiket, dan memberi tahu pasien saat obat siap diambil.
 
-Built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, minimal **shadcn/ui** functional components, **Drizzle ORM**, **Turso / SQLite**, **Zod**, and **npm**.
+**Buka aplikasi:** [gamma-hospital.vercel.app](https://gamma-hospital.vercel.app)
 
----
+> Aplikasi yang dipublikasikan saat ini adalah demo operasional. Nama pasien, nomor rekam medis, resep, dan nomor antrean di dalamnya merupakan data sintetis untuk pengujian—bukan data pasien sebenarnya.
 
-## 🎯 Scope & Features
+## Panduan petugas farmasi
 
-- **Staff Pharmacy Workbench (`/`)**:
-  - Operational prescription queue with status filtering (`ALL`, `WAITING`, `VERIFIED`, `PREPARING`, `READY_FOR_PICKUP`, `NEEDS_CLARIFICATION`, `COMPLETED`).
-  - **Keyboard Navigation**:
-    - `J` or `↓`: Select next queue row
-    - `K` or `↑`: Select previous queue row
-    - `Enter`: Open prescription detail view
-- **Prescription Detail (`/prescriptions/[id]`)**:
-  - Patient demographics (Name, MRN, Age, Gender, Phone).
-  - Prescription breakdown separating **Ready-made** (`READY` / Obat Jadi) and **Compounded** (`COMPOUNDED` / Racikan) items with dosage and signa.
-  - Step-by-step status transitions with validation rules.
-  - Action to flag for doctor clarification (`NEEDS_CLARIFICATION`).
-  - Real-time audit log timeline tracking all status changes and label printing events.
-- **Medication Label Print Route (`/prescriptions/[id]/label`)**:
-  - Browser-native printable thermal stickers (`@media print` formatted).
-  - Contains pharmacy branding, patient MRN, drug details, prominent signa instructions, and dispensing timestamps.
-- **Patient Queue Tracker (`/track/[queueCode]`)**:
-  - Patient-facing lightweight mobile page.
-  - Real-time polling (every 4 seconds, zero WebSockets overhead).
-  - Masked patient names for privacy compliance.
-- **Public TV Queue Display (`/display`)**:
-  - Waiting room TV board with active clock and 3-second polling.
-  - Distinct panels for *Siap Diambil (Ready for Pickup)*, *Sedang Disiapkan (Preparing)*, and *Selesai (Completed)*.
+### 1. Pantau antrean resep
 
----
+Buka halaman utama untuk melihat seluruh resep. Gunakan tab status untuk menyaring antrean:
 
-## 🗄️ Database Architecture (5 Tables Only)
+- **Menunggu** — resep baru yang belum diverifikasi.
+- **Terverifikasi** — resep sudah diperiksa dan siap disiapkan.
+- **Sedang Disiapkan** — obat sedang diracik atau dikemas.
+- **Siap Diambil** — obat dapat diserahkan kepada pasien.
+- **Butuh Klarifikasi** — ada informasi yang perlu dikonfirmasi kepada dokter.
+- **Selesai** — obat sudah diserahkan.
 
-1. `patients` — Patient master records (MRN, name, birth date, gender, phone).
-2. `prescriptions` — Clinical prescription orders (doctor, department, status, notes).
-3. `prescription_items` — Medication line items (`READY` vs `COMPOUNDED`, quantity, unit, dosage, signa).
-4. `queue_entries` — Pharmacy queue tokens (`A-001`, `B-001`, display numbers, timestamps).
-5. `audit_logs` — Immutable audit trail of every status transition and label print action.
+Untuk bekerja lebih cepat, gunakan `J` atau `↓` untuk turun, `K` atau `↑` untuk naik, lalu `Enter` untuk membuka resep yang dipilih.
 
----
+### 2. Proses resep
 
-## 🚀 Local Development Setup
+Buka salah satu resep untuk melihat data pasien, dokter, daftar obat, aturan pakai, dan riwayat perubahan. Ikuti tombol tindakan utama sesuai urutan kerja:
 
-### 1. Prerequisites
-- **Node.js**: v18.18+ or v20+
-- **npm**: v9+ or v10+
+`Menunggu → Terverifikasi → Sedang Disiapkan → Siap Diambil → Selesai`
 
-### 2. Installation
+Gunakan **Butuh Klarifikasi** ketika dosis, obat, atau instruksi dokter belum jelas. Setiap perubahan status dicatat dalam riwayat resep.
+
+### 3. Cetak etiket obat
+
+Dari detail resep, buka etiket lalu cetak pada kertas termal 100 × 60 mm. Periksa kembali nama pasien, obat, dosis, dan aturan pakai sebelum mencetak atau menyerahkan obat.
+
+### 4. Tampilkan antrean di ruang tunggu
+
+Buka [Layar Antrean](https://gamma-hospital.vercel.app/display) pada TV atau monitor ruang tunggu. Halaman ini memperbarui antrean secara otomatis dan menonjolkan nomor yang sudah siap dipanggil.
+
+## Panduan pasien
+
+Pasien dapat memantau status obat melalui alamat yang diberikan petugas:
+
+`https://gamma-hospital.vercel.app/track/KODE-ANTREAN`
+
+Sebagai contoh demo, buka [antrean A-002](https://gamma-hospital.vercel.app/track/A-002). Nama pasien ditampilkan dalam bentuk tersamarkan untuk menjaga privasi.
+
+## Catatan penggunaan
+
+- Sistem ini mendukung alur kerja farmasi dan tidak menggantikan pemeriksaan klinis apoteker.
+- Jangan memasukkan data pasien sebenarnya ke deployment demo publik.
+- Pastikan etiket dan obat diperiksa ulang sebelum diserahkan.
+- Jika halaman tidak memperbarui status, muat ulang halaman dan hubungi pengelola aplikasi bila masalah berlanjut.
+
+## Informasi singkat untuk pengelola
+
+Aplikasi menggunakan Next.js, TypeScript, Drizzle ORM, dan Turso/libSQL. Untuk menjalankannya secara lokal:
+
 ```bash
-# Clone and enter repository
-git clone https://github.com/justhenix/gamma-hospital.git
-cd hospital
-
-# Install dependencies
 npm install
-```
-
-### 3. Environment Configuration
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-Default `.env` configuration uses local SQLite:
-```env
-DATABASE_URL="file:local.db"
-```
-
-*(Optional: For remote Turso database, provide `DATABASE_URL="libsql://..."` and `DATABASE_AUTH_TOKEN="..."`)*
-
-### 4. Database Migration & Synthetic Seeding
-```bash
-# Push Drizzle schema to SQLite database
+copy .env.example .env
 npm run db:push
-
-# Seed realistic hospital pharmacy test data
 npm run db:seed
-```
-
-### 5. Start Development Server
-```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+Gunakan `cp .env.example .env` pada macOS atau Linux. Jalankan seluruh pemeriksaan sebelum mengirim perubahan:
 
-## 🧭 Key Routes
+```bash
+npm run check
+```
 
-| Route | Description |
-|---|---|
-| `/` | Staff Pharmacy Workbench & Keyboard Queue |
-| `/prescriptions/[id]` | Prescription Detail, Workflow Actions, & Audit Log |
-| `/prescriptions/[id]/label` | Printable Medication Labels (Browser Print) |
-| `/track/[queueCode]` | Patient Queue Status Tracker (e.g. `/track/A-002`) |
-| `/display` | Public TV Waiting Room Queue Display Board |
-| `/api/display` | Polling endpoint for TV Display |
-| `/api/track/[queueCode]` | Polling endpoint for Patient Tracker |
-
----
-
-## 🏥 Hospital System Integration Boundary
-
-This repository is strictly scoped as a raw, modular workbench scaffold. Integration with existing hospital information systems (e.g., SIMRS Khanza, HL7/FHIR, or legacy Java backends) is structured to connect via the server data-access layer in `src/server/data-access/` without altering the core workbench interface.
+GitHub Actions menjalankan tes, lint, typecheck, dan build untuk setiap pull request serta push ke `main`. Vercel membuat preview untuk branch lain dan menerbitkan `main` ke alamat produksi secara otomatis. Deployment menerima `DATABASE_URL`/`DATABASE_AUTH_TOKEN` atau variabel `TURSO_*` dari Vercel Marketplace; jangan pernah menyimpan nilainya di Git.

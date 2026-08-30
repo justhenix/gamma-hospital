@@ -16,7 +16,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   const label = getStatusLabel(status);
 
   return (
-    <Badge variant={variant} className="font-mono text-xs uppercase">
+    <Badge variant={variant} className="font-sans text-xs font-semibold">
       {label}
     </Badge>
   );

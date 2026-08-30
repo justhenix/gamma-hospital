@@ -36,3 +36,13 @@ local.db
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local browser-test and rendered-preview artifacts
+/.webwright-cleanup/
+/.webwright-smoke/
+/tmp/
+
+# local platform and agent provisioning state
+/.vercel/
+/.agents/skills/
+/skills-lock.json

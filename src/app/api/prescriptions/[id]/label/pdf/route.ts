@@ -20,11 +20,11 @@ export async function GET(
     }
 
     const pdfBuffer = await generatePrescriptionLabelPdf(
-      prescription as any,
+      prescription as unknown as import("@/lib/label-pdf").PrescriptionWithDetails,
       "Staff Farmasi (PDF Export)"
     );
 
-    return new NextResponse(pdfBuffer as any, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `inline; filename="Label-${prescription.prescriptionNumber}.pdf"`,

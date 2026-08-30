@@ -42,6 +42,7 @@ export interface PrescriptionListItem {
     ready: number;
     compounded: number;
   };
+  items: PrescriptionItem[];
 }
 
 export async function getPrescriptionsList(
@@ -96,6 +97,7 @@ export async function getPrescriptionsList(
         ready: readyCount,
         compounded: compoundedCount,
       },
+      items: row.items,
     };
   });
 }
